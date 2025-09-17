@@ -30,10 +30,10 @@ select, .search-input { padding: 8px 12px; border-radius: 6px; border: 1px solid
     <a href="#" id="tabSession" class="tab">Рейтинг по сессии</a>
 </div>
 
-<!-- фильтры, теперь комбобокс скрыт по умолчанию -->
-<div class="filters hidden" id="filtersSession">
-    <select id="sessionSelect"></select>
+<!-- фильтры: поиск всегда виден, селект сессии только для вкладки сессии -->
+<div class="filters">
     <input type="text" id="teamSearch" class="search-input" placeholder="Поиск по талант id...">
+    <select id="sessionSelect" class="hidden"></select>
 </div>
 
 <div class="session-info hidden" id="sessionInfo">
@@ -62,7 +62,6 @@ const sessionTable = document.getElementById('sessionTable').querySelector('tbod
 const sessionInfo = document.getElementById('sessionInfo');
 const sessionSelect = document.getElementById('sessionSelect');
 const teamSearch = document.getElementById('teamSearch');
-const filtersSession = document.getElementById('filtersSession');
 
 let csvData = [];
 
@@ -130,7 +129,7 @@ tabTotal.addEventListener('click', e=>{
     document.getElementById('totalTable').classList.remove('hidden'); 
     document.getElementById('sessionTable').classList.add('hidden'); 
     sessionInfo.classList.add('hidden');
-    filtersSession.classList.add('hidden'); // скрываем фильтры для общего рейтинга
+    sessionSelect.classList.add('hidden'); // скрываем комбобокс
 });
 
 tabSession.addEventListener('click', e=>{
@@ -140,10 +139,10 @@ tabSession.addEventListener('click', e=>{
     document.getElementById('totalTable').classList.add('hidden'); 
     document.getElementById('sessionTable').classList.remove('hidden'); 
     sessionInfo.classList.remove('hidden');
-    filtersSession.classList.remove('hidden'); // показываем фильтры для сессии
+    sessionSelect.classList.remove('hidden'); // показываем комбобокс
 });
 
-// Поиск только для таблицы сессии
+// Поиск теперь фильтрует **только таблицу сессии**
 teamSearch.addEventListener('keyup', function(){
     let filter = this.value.toLowerCase();
     const rows = document.getElementById('sessionTable').querySelectorAll('tbody tr');
