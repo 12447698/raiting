@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рейтинг талантов</title>
+    <title>Рейтинг</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -335,8 +335,8 @@
 
 <div class="container">
     <header>
-        <h1>Рейтинг талантов</h1>
-        <p class="subtitle">Соревнование по решению задач и достижению целей</p>
+        <h1>Рейтинг</h1>
+        <p class="subtitle">Соревнование</p>
     </header>
 
     <div class="tabs">
@@ -402,67 +402,49 @@
 </div>
 
 <script>
-// Данные для демонстрации (в реальном приложении будут загружаться из CSV)
-const csvData = [
-    {type: 'total', team_id: '1', team_name: '123', session: '1', score: '40', tasks_solved: '2'},
-    {type: 'total', team_id: '1', team_name: '123', session: '2', score: '40', tasks_solved: '2'},
-    {type: 'total', team_id: '1', team_name: '123', session: '3', score: '40', tasks_solved: '2'},
-    {type: 'total', team_id: '1', team_name: '123', session: '4', score: '45', tasks_solved: '3'},
-    {type: 'total', team_id: '1', team_name: '123', session: '5', score: '50', tasks_solved: '4'},
-    {type: 'total', team_id: '1', team_name: '123', session: '6', score: '55', tasks_solved: '4'},
-    {type: 'total', team_id: '1', team_name: '123', session: 'информатика', score: '60', tasks_solved: '5'},
-    {type: 'total', team_id: '1', team_name: '123', session: 'математика', score: '65', tasks_solved: '5'},
-    
-    {type: 'total', team_id: '2', team_name: '124', session: '1', score: '30', tasks_solved: '1'},
-    {type: 'total', team_id: '2', team_name: '124', session: '2', score: '35', tasks_solved: '2'},
-    {type: 'total', team_id: '2', team_name: '124', session: '3', score: '30', tasks_solved: '1'},
-    {type: 'total', team_id: '2', team_name: '124', session: '4', score: '40', tasks_solved: '2'},
-    {type: 'total', team_id: '2', team_name: '124', session: '5', score: '45', tasks_solved: '3'},
-    {type: 'total', team_id: '2', team_name: '124', session: '6', score: '50', tasks_solved: '4'},
-    {type: 'total', team_id: '2', team_name: '124', session: 'информатика', score: '55', tasks_solved: '4'},
-    {type: 'total', team_id: '2', team_name: '124', session: 'математика', score: '60', tasks_solved: '5'},
-    
-    {type: 'total', team_id: '3', team_name: '43234', session: '1', score: '20', tasks_solved: '1'},
-    {type: 'total', team_id: '3', team_name: '43234', session: '2', score: '25', tasks_solved: '1'},
-    {type: 'total', team_id: '3', team_name: '43234', session: '3', score: '25', tasks_solved: '1'},
-    {type: 'total', team_id: '3', team_name: '43234', session: '4', score: '30', tasks_solved: '2'},
-    {type: 'total', team_id: '3', team_name: '43234', session: '5', score: '35', tasks_solved: '2'},
-    {type: 'total', team_id: '3', team_name: '43234', session: '6', score: '40', tasks_solved: '3'},
-    {type: 'total', team_id: '3', team_name: '43234', session: 'информатика', score: '45', tasks_solved: '3'},
-    {type: 'total', team_id: '3', team_name: '43234', session: 'математика', score: '50', tasks_solved: '4'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '1', score: '40', tasks_solved: '2'},
-    {type: 'session', team_id: '124', team_name: '124', session: '1', score: '30', tasks_solved: '1'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '1', score: '20', tasks_solved: '1'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '2', score: '40', tasks_solved: '2'},
-    {type: 'session', team_id: '124', team_name: '124', session: '2', score: '35', tasks_solved: '2'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '2', score: '25', tasks_solved: '1'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '3', score: '40', tasks_solved: '2'},
-    {type: 'session', team_id: '124', team_name: '124', session: '3', score: '30', tasks_solved: '1'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '3', score: '25', tasks_solved: '1'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '4', score: '45', tasks_solved: '3'},
-    {type: 'session', team_id: '124', team_name: '124', session: '4', score: '40', tasks_solved: '2'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '4', score: '30', tasks_solved: '2'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '5', score: '50', tasks_solved: '4'},
-    {type: 'session', team_id: '124', team_name: '124', session: '5', score: '45', tasks_solved: '3'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '5', score: '35', tasks_solved: '2'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: '6', score: '55', tasks_solved: '4'},
-    {type: 'session', team_id: '124', team_name: '124', session: '6', score: '50', tasks_solved: '4'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: '6', score: '40', tasks_solved: '3'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: 'информатика', score: '60', tasks_solved: '5'},
-    {type: 'session', team_id: '124', team_name: '124', session: 'информатика', score: '55', tasks_solved: '4'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: 'информатика', score: '45', tasks_solved: '3'},
-    
-    {type: 'session', team_id: '123', team_name: '123', session: 'математика', score: '65', tasks_solved: '5'},
-    {type: 'session', team_id: '124', team_name: '124', session: 'математика', score: '60', tasks_solved: '5'},
-    {type: 'session', team_id: '43234', team_name: '43234', session: 'математика', score: '50', tasks_solved: '4'}
-];
+let csvData = [];
+
+fetch('ratings.csv')
+    .then(response => response.text())
+    .then(data => {
+        Papa.parse(data, {header:true, skipEmptyLines:true, complete: function(results){
+            csvData = results.data;
+            initTables();
+        }});
+    });
+
+function initTables(){
+    const sessions = [...new Set(csvData.filter(r => r.type=='total').map(r => r.session))];
+    sessionSelect.innerHTML = sessions.map(s => `<option value="${s}">Сессия ${s}</option>`).join('');
+
+    renderTotalTable();
+    renderSessionTable(sessionSelect.value);
+}
+
+function renderTotalTable(){
+    const totalTeams = {};
+    csvData.filter(r=>r.type=='total').forEach(r=>{
+        if(!totalTeams[r.team_id]) totalTeams[r.team_id] = {team_name:r.team_name, scores: {}, total:0};
+        totalTeams[r.team_id].scores[r.session] = parseInt(r.score);
+        totalTeams[r.team_id].total += parseInt(r.score);
+    });
+
+    const sortedTeams = Object.entries(totalTeams).sort((a,b)=>b[1].total - a[1].total);
+
+    const headers = ['Место','Талант ID',...Object.keys(totalTeams[sortedTeams[0][0]].scores).map(s=>'Сессия '+s),'Всего'];
+    document.getElementById('totalTable').querySelector('thead').innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+
+    totalTable.innerHTML = '';
+    sortedTeams.forEach((entry,index)=>{
+        const row = entry[1];
+        totalTable.innerHTML += `<tr>
+            <td class="position">${index+1}</td>
+            <td class="team-cell">${row.team_name}</td>
+            ${Object.keys(row.scores).map(s=>`<td>${row.scores[s]}</td>`).join('')}
+            <td><b>${row.total}</b></td>
+        </tr>`;
+    });
+}
 
 // Элементы DOM
 const tabTotal = document.getElementById('tabTotal');
@@ -658,3 +640,4 @@ sessionSelect.addEventListener('change', () => {
 
 </body>
 </html>
+
