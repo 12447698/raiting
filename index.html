@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Рейтинг</title>
 <style>
-/* стили оставляем как раньше */
 .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
 .tab { padding: 10px 20px; border-radius: 8px; border: 1px solid #e6b800; background: #fff8e1; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: #5c4500; font-weight: 500; }
 .tab:hover { background: #ffecb3; }
@@ -122,14 +121,28 @@ function renderSessionTable(session){
 }
 
 // Переключение вкладок
-tabTotal.addEventListener('click', e=>{e.preventDefault(); tabTotal.classList.add('active'); tabSession.classList.remove('active'); document.getElementById('totalTable').classList.remove('hidden'); document.getElementById('sessionTable').classList.add('hidden'); sessionInfo.classList.add('hidden');});
-tabSession.addEventListener('click', e=>{e.preventDefault(); tabSession.classList.add('active'); tabTotal.classList.remove('active'); document.getElementById('totalTable').classList.add('hidden'); document.getElementById('sessionTable').classList.remove('hidden'); sessionInfo.classList.remove('hidden');});
+tabTotal.addEventListener('click', e=>{
+    e.preventDefault(); 
+    tabTotal.classList.add('active'); 
+    tabSession.classList.remove('active'); 
+    document.getElementById('totalTable').classList.remove('hidden'); 
+    document.getElementById('sessionTable').classList.add('hidden'); 
+    sessionInfo.classList.add('hidden');
+});
+tabSession.addEventListener('click', e=>{
+    e.preventDefault(); 
+    tabSession.classList.add('active'); 
+    tabTotal.classList.remove('active'); 
+    document.getElementById('totalTable').classList.add('hidden'); 
+    document.getElementById('sessionTable').classList.remove('hidden'); 
+    sessionInfo.classList.remove('hidden');
+});
 
-// Поиск
+// Поиск только для таблицы сессии
 teamSearch.addEventListener('keyup', function(){
     let filter = this.value.toLowerCase();
-    const visibleTable = document.getElementById('totalTable').classList.contains('hidden') ? document.getElementById('sessionTable') : document.getElementById('totalTable');
-    visibleTable.querySelectorAll('tbody tr').forEach(row=>{
+    const rows = document.getElementById('sessionTable').querySelectorAll('tbody tr');
+    rows.forEach(row=>{
         let teamCell = row.querySelector('.team-cell');
         row.style.display = teamCell.textContent.toLowerCase().includes(filter) ? '' : 'none';
     });
