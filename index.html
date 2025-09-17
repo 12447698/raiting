@@ -30,7 +30,8 @@ select, .search-input { padding: 8px 12px; border-radius: 6px; border: 1px solid
     <a href="#" id="tabSession" class="tab">Рейтинг по сессии</a>
 </div>
 
-<div class="filters">
+<!-- фильтры, теперь комбобокс скрыт по умолчанию -->
+<div class="filters hidden" id="filtersSession">
     <select id="sessionSelect"></select>
     <input type="text" id="teamSearch" class="search-input" placeholder="Поиск по талант id...">
 </div>
@@ -61,6 +62,7 @@ const sessionTable = document.getElementById('sessionTable').querySelector('tbod
 const sessionInfo = document.getElementById('sessionInfo');
 const sessionSelect = document.getElementById('sessionSelect');
 const teamSearch = document.getElementById('teamSearch');
+const filtersSession = document.getElementById('filtersSession');
 
 let csvData = [];
 
@@ -128,7 +130,9 @@ tabTotal.addEventListener('click', e=>{
     document.getElementById('totalTable').classList.remove('hidden'); 
     document.getElementById('sessionTable').classList.add('hidden'); 
     sessionInfo.classList.add('hidden');
+    filtersSession.classList.add('hidden'); // скрываем фильтры для общего рейтинга
 });
+
 tabSession.addEventListener('click', e=>{
     e.preventDefault(); 
     tabSession.classList.add('active'); 
@@ -136,6 +140,7 @@ tabSession.addEventListener('click', e=>{
     document.getElementById('totalTable').classList.add('hidden'); 
     document.getElementById('sessionTable').classList.remove('hidden'); 
     sessionInfo.classList.remove('hidden');
+    filtersSession.classList.remove('hidden'); // показываем фильтры для сессии
 });
 
 // Поиск только для таблицы сессии
