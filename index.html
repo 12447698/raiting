@@ -1,109 +1,28 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Рейтинг</title>
-    <style>
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: 1px solid #e6b800;
-            background: #fff8e1;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: #5c4500;
-            font-weight: 500;
-        }
-        .tab:hover {
-            background: #ffecb3;
-        }
-        .tab.active {
-            background: #ffc107;
-            color: #fff;
-            border-color: #e6b800;
-        }
-
-        .filters {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        select, .search-input {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid #e6b800;
-            font-size: 14px;
-            background: #fffef5;
-        }
-        .search-input {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .rating-container {
-            overflow-x: auto;
-        }
-        .rating-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-        }
-        .rating-table th, .rating-table td {
-            padding: 12px 16px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .rating-table thead {
-            background: #ffc107;
-            color: white;
-        }
-        .rating-table tbody tr:nth-child(odd) {
-            background: #fffdf4;
-        }
-        .rating-table tbody tr:hover {
-            background: #fff8e1;
-        }
-        .position {
-            font-weight: bold;
-            color: #5c4500;
-        }
-        .team-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: left;
-        }
-        .team-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #ffd54f;
-        }
-        .session-info {
-            margin: 20px 0;
-            padding: 15px;
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
-            border-radius: 6px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Рейтинг</title>
+<style>
+/* стили оставляем как раньше */
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+.tab { padding: 10px 20px; border-radius: 8px; border: 1px solid #e6b800; background: #fff8e1; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: #5c4500; font-weight: 500; }
+.tab:hover { background: #ffecb3; }
+.tab.active { background: #ffc107; color: #fff; border-color: #e6b800; }
+.filters { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 15px; flex-wrap: wrap; }
+select, .search-input { padding: 8px 12px; border-radius: 6px; border: 1px solid #e6b800; font-size: 14px; background: #fffef5; }
+.search-input { flex: 1; min-width: 200px; }
+.rating-container { overflow-x: auto; }
+.rating-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 40px; }
+.rating-table th, .rating-table td { padding: 12px 16px; text-align: center; vertical-align: middle; }
+.rating-table thead { background: #ffc107; color: white; }
+.rating-table tbody tr:nth-child(odd) { background: #fffdf4; }
+.rating-table tbody tr:hover { background: #fff8e1; }
+.position { font-weight: bold; color: #5c4500; }
+.team-cell { display: flex; align-items: center; gap: 10px; justify-content: left; }
+.session-info { margin: 20px 0; padding: 15px; background: #fff8e1; border-left: 4px solid #ffc107; border-radius: 6px; }
+.hidden { display: none; }
+</style>
 </head>
 <body>
 
@@ -113,139 +32,111 @@
 </div>
 
 <div class="filters">
-    <select id="sessionSelect">
-        <option value="1">Сессия 1: Название</option>
-        <option value="2">Сессия 2: Название</option>
-        <option value="3">Сессия 3: Название</option>
-    </select>
+    <select id="sessionSelect"></select>
     <input type="text" id="teamSearch" class="search-input" placeholder="Поиск по талант id...">
 </div>
 
 <div class="session-info hidden" id="sessionInfo">
-    <h3>Сессия 1: Название</h3>
+    <h3></h3>
     <p>Дата проведения: 17.09.2025</p>
 </div>
 
 <div class="rating-container">
-    <!-- Общий рейтинг -->
     <table class="rating-table" id="totalTable">
-        <thead>
-            <tr>
-                <th class="position">Место</th>
-                <th>Талант ID</th>
-                <th>Сессия 1</th>
-                <th>Сессия 2</th>
-                <th>Сессия 3</th>
-                <th>Всего</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="position">1</td>
-                <td class="team-cell">Team Alpha</td>
-                <td>40</td>
-                <td>40</td>
-                <td>40</td>
-                <td><b>120</b></td>
-            </tr>
-            <tr>
-                <td class="position">2</td>
-                <td class="team-cell">Team Beta</td>
-                <td>30</td>
-                <td>35</td>
-                <td>30</td>
-                <td><b>95</b></td>
-            </tr>
-            <tr>
-                <td class="position">3</td>
-                <td class="team-cell">Team Gamma</td>
-                <td>20</td>
-                <td>25</td>
-                <td>25</td>
-                <td><b>70</b></td>
-            </tr>
-        </tbody>
+        <thead><tr><th class="position">Место</th><th>Талант ID</th></tr></thead>
+        <tbody></tbody>
     </table>
 
-    <!-- Рейтинг по сессии -->
     <table class="rating-table hidden" id="sessionTable">
-        <thead>
-            <tr>
-                <th class="position">Место</th>
-                <th>Талант ID</th>
-                <th>Баллы</th>
-                <th>Решено задач</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="position">1</td>
-                <td class="team-cell">123</td>
-                <td>40</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td class="position">2</td>
-                <td class="team-cell">432</td>
-                <td>35</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td class="position">3</td>
-                <td class="team-cell">34</td>
-                <td>25</td>
-                <td>1</td>
-            </tr>
-        </tbody>
+        <thead><tr><th class="position">Место</th><th>Талант ID</th><th>Баллы</th><th>Решено задач</th></tr></thead>
+        <tbody></tbody>
     </table>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
 const tabTotal = document.getElementById('tabTotal');
 const tabSession = document.getElementById('tabSession');
-const totalTable = document.getElementById('totalTable');
-const sessionTable = document.getElementById('sessionTable');
+const totalTable = document.getElementById('totalTable').querySelector('tbody');
+const sessionTable = document.getElementById('sessionTable').querySelector('tbody');
 const sessionInfo = document.getElementById('sessionInfo');
 const sessionSelect = document.getElementById('sessionSelect');
 const teamSearch = document.getElementById('teamSearch');
 
+let csvData = [];
+
+fetch('ratings.csv')
+    .then(response => response.text())
+    .then(data => {
+        Papa.parse(data, {header:true, skipEmptyLines:true, complete: function(results){
+            csvData = results.data;
+            initTables();
+        }});
+    });
+
+function initTables(){
+    const sessions = [...new Set(csvData.filter(r => r.type=='total').map(r => r.session))];
+    sessionSelect.innerHTML = sessions.map(s => `<option value="${s}">Сессия ${s}</option>`).join('');
+
+    renderTotalTable();
+    renderSessionTable(sessionSelect.value);
+}
+
+function renderTotalTable(){
+    const totalTeams = {};
+    csvData.filter(r=>r.type=='total').forEach(r=>{
+        if(!totalTeams[r.team_id]) totalTeams[r.team_id] = {team_name:r.team_name, scores: {}, total:0};
+        totalTeams[r.team_id].scores[r.session] = parseInt(r.score);
+        totalTeams[r.team_id].total += parseInt(r.score);
+    });
+
+    const sortedTeams = Object.entries(totalTeams).sort((a,b)=>b[1].total - a[1].total);
+
+    const headers = ['Место','Талант ID',...Object.keys(totalTeams[sortedTeams[0][0]].scores).map(s=>'Сессия '+s),'Всего'];
+    document.getElementById('totalTable').querySelector('thead').innerHTML = `<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>`;
+
+    totalTable.innerHTML = '';
+    sortedTeams.forEach((entry,index)=>{
+        const row = entry[1];
+        totalTable.innerHTML += `<tr>
+            <td class="position">${index+1}</td>
+            <td class="team-cell">${row.team_name}</td>
+            ${Object.keys(row.scores).map(s=>`<td>${row.scores[s]}</td>`).join('')}
+            <td><b>${row.total}</b></td>
+        </tr>`;
+    });
+}
+
+function renderSessionTable(session){
+    const sessionRows = csvData.filter(r=>r.type=='session' && r.session==session);
+    sessionTable.innerHTML = '';
+    sessionRows.forEach((r,index)=>{
+        sessionTable.innerHTML += `<tr>
+            <td class="position">${index+1}</td>
+            <td class="team-cell">${r.team_id}</td>
+            <td>${r.score}</td>
+            <td>${r.tasks_solved}</td>
+        </tr>`;
+    });
+    sessionInfo.querySelector('h3').textContent = `Сессия ${session}: Название`;
+}
+
 // Переключение вкладок
-tabTotal.addEventListener('click', () => {
-    tabTotal.classList.add('active');
-    tabSession.classList.remove('active');
-    totalTable.classList.remove('hidden');
-    sessionTable.classList.add('hidden');
-    sessionInfo.classList.add('hidden');
-});
+tabTotal.addEventListener('click', e=>{e.preventDefault(); tabTotal.classList.add('active'); tabSession.classList.remove('active'); document.getElementById('totalTable').classList.remove('hidden'); document.getElementById('sessionTable').classList.add('hidden'); sessionInfo.classList.add('hidden');});
+tabSession.addEventListener('click', e=>{e.preventDefault(); tabSession.classList.add('active'); tabTotal.classList.remove('active'); document.getElementById('totalTable').classList.add('hidden'); document.getElementById('sessionTable').classList.remove('hidden'); sessionInfo.classList.remove('hidden');});
 
-tabSession.addEventListener('click', () => {
-    tabSession.classList.add('active');
-    tabTotal.classList.remove('active');
-    totalTable.classList.add('hidden');
-    sessionTable.classList.remove('hidden');
-    sessionInfo.classList.remove('hidden');
-});
-
-// Поиск по таблице
-teamSearch.addEventListener('keyup', function() {
+// Поиск
+teamSearch.addEventListener('keyup', function(){
     let filter = this.value.toLowerCase();
-    const visibleTable = totalTable.classList.contains('hidden') ? sessionTable : totalTable;
-    let rows = visibleTable.querySelectorAll('tbody tr');
-    rows.forEach(row => {
+    const visibleTable = document.getElementById('totalTable').classList.contains('hidden') ? document.getElementById('sessionTable') : document.getElementById('totalTable');
+    visibleTable.querySelectorAll('tbody tr').forEach(row=>{
         let teamCell = row.querySelector('.team-cell');
-        if (teamCell && teamCell.textContent.toLowerCase().includes(filter)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
+        row.style.display = teamCell.textContent.toLowerCase().includes(filter) ? '' : 'none';
     });
 });
 
-// Обновление информации о сессии при выборе
-sessionSelect.addEventListener('change', function() {
-    sessionInfo.querySelector('h3').textContent = `Сессия ${this.value}: Название`;
-    sessionInfo.querySelector('p').textContent = 'Дата проведения: 17.09.2025';
-});
+// Смена сессии
+sessionSelect.addEventListener('change', ()=>renderSessionTable(sessionSelect.value));
 </script>
 
 </body>
