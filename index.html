@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рейтинг</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -300,6 +299,23 @@
             margin: 20px 0;
         }
 
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .tabs {
                 justify-content: center;
@@ -362,7 +378,7 @@
         <div class="filter-group">
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="teamSearch" class="search-input" placeholder="Поиск по талант ID...">
+                <input type="text" id="teamSearch" class="search-input" placeholder="Поиск по команде...">
             </div>
         </div>
         <div class="filter-group">
@@ -378,11 +394,16 @@
     </div>
 
     <div class="rating-container">
-        <table class="rating-table" id="totalTable">
+        <div id="loading" class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Загрузка данных...</p>
+        </div>
+
+        <table class="rating-table hidden" id="totalTable">
             <thead>
                 <tr>
                     <th class="position">Место</th>
-                    <th>Талант ID</th>
+                    <th>Команда</th>
                     <!-- Динамические заголовки будут добавлены через JS -->
                 </tr>
             </thead>
@@ -393,7 +414,7 @@
             <thead>
                 <tr>
                     <th class="position">Место</th>
-                    <th>Талант ID</th>
+                    <th>Команда</th>
                     <th>Баллы</th>
                     <th>Решено задач</th>
                 </tr>
@@ -407,45 +428,134 @@
 // Элементы DOM
 const tabTotal = document.getElementById('tabTotal');
 const tabSession = document.getElementById('tabSession');
-const totalTable = document.getElementById('totalTable').querySelector('tbody');
-const totalTableHead = document.getElementById('totalTable').querySelector('thead tr');
-const sessionTable = document.getElementById('sessionTable').querySelector('tbody');
+const totalTable = document.getElementById('totalTable');
+const totalTableHead = totalTable.querySelector('thead tr');
+const totalTableBody = totalTable.querySelector('tbody');
+const sessionTable = document.getElementById('sessionTable');
+const sessionTableBody = sessionTable.querySelector('tbody');
 const sessionInfo = document.getElementById('sessionInfo');
 const sessionSelect = document.getElementById('sessionSelect');
 const teamSearch = document.getElementById('teamSearch');
 const sessionDateEl = document.getElementById('sessionDate');
+const loadingEl = document.getElementById('loading');
 
-let csvData = [];
+let apiData = [];
 
-// Загрузка данных из CSV
-fetch('ratings.csv')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Не удалось загрузить файл ratings.csv');
-        }
-        return response.text();
-    })
-    .then(data => {
-        Papa.parse(data, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                csvData = results.data;
-                console.log('Загруженные данные:', csvData);
-                console.log('Уникальные сессии:', [...new Set(csvData.map(r => r.session))]);
-                console.log('Уникальные типы:', [...new Set(csvData.map(r => r.type))]);
-                initTables();
-            },
-            error: function(error) {
-                console.error('Ошибка парсинга CSV:', error);
-                showError('Ошибка парсинга данных. Проверьте формат CSV файла.');
-            }
-        });
-    })
-    .catch(error => {
-        console.error('Ошибка загрузки CSV:', error);
-        showError('Не удалось загрузить файл ratings.csv. Убедитесь, что файл существует и доступен.');
-    });
+// URL API (замените на реальный URL вашего API)
+const API_URL = 'https://api.example.com/ratings';
+
+// Загрузка данных из API
+async function loadData() {
+    try {
+        loadingEl.classList.remove('hidden');
+        // В реальном приложении здесь будет fetch к вашему API
+        // const response = await fetch(API_URL);
+        // if (!response.ok) throw new Error('Ошибка загрузки данных');
+        // apiData = await response.json();
+        
+        // Имитация запроса к API с задержкой
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Используем данные из CSV, преобразованные в JSON формат
+
+        apiData = await fetchMockData();
+        
+        loadingEl.classList.add('hidden');
+        initTables();
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        loadingEl.classList.add('hidden');
+        showError('Не удалось загрузить данные. Проверьте подключение к интернету.');
+    }
+}
+
+// Функция для имитации данных API
+async function fetchMockData() {
+    return [
+        {type: "total", session: "1", team_id: "team001", team_name: "Т-734", score: 85, tasks_solved: 8},
+        {type: "total", session: "1", team_id: "team002", team_name: "Т-218", score: 92, tasks_solved: 9},
+        {type: "total", session: "1", team_id: "team003", team_name: "Т-591", score: 78, tasks_solved: 7},
+        {type: "total", session: "1", team_id: "team004", team_name: "Т-426", score: 95, tasks_solved: 9},
+        {type: "total", session: "1", team_id: "team005", team_name: "Т-157", score: 88, tasks_solved: 8},
+        {type: "total", session: "2", team_id: "team001", team_name: "Т-734", score: 120, tasks_solved: 12},
+        {type: "total", session: "2", team_id: "team002", team_name: "Т-218", score: 115, tasks_solved: 11},
+        {type: "total", session: "2", team_id: "team003", team_name: "Т-591", score: 105, tasks_solved: 10},
+        {type: "total", session: "2", team_id: "team004", team_name: "Т-426", score: 125, tasks_solved: 12},
+        {type: "total", session: "2", team_id: "team005", team_name: "Т-157", score: 110, tasks_solved: 11},
+        {type: "total", session: "3", team_id: "team001", team_name: "Т-734", score: 155, tasks_solved: 15},
+        {type: "total", session: "3", team_id: "team002", team_name: "Т-218", score: 148, tasks_solved: 14},
+        {type: "total", session: "3", team_id: "team003", team_name: "Т-591", score: 135, tasks_solved: 13},
+        {type: "total", session: "3", team_id: "team004", team_name: "Т-426", score: 160, tasks_solved: 16},
+        {type: "total", session: "3", team_id: "team005", team_name: "Т-157", score: 142, tasks_solved: 14},
+        {type: "total", session: "4", team_id: "team001", team_name: "Т-734", score: 190, tasks_solved: 19},
+        {type: "total", session: "4", team_id: "team002", team_name: "Т-218", score: 182, tasks_solved: 18},
+        {type: "total", session: "4", team_id: "team003", team_name: "Т-591", score: 168, tasks_solved: 16},
+        {type: "total", session: "4", team_id: "team004", team_name: "Т-426", score: 195, tasks_solved: 19},
+        {type: "total", session: "4", team_id: "team005", team_name: "Т-157", score: 175, tasks_solved: 17},
+        {type: "total", session: "5", team_id: "team001", team_name: "Т-734", score: 225, tasks_solved: 22},
+        {type: "total", session: "5", team_id: "team002", team_name: "Т-218", score: 215, tasks_solved: 21},
+        {type: "total", session: "5", team_id: "team003", team_name: "Т-591", score: 200, tasks_solved: 20},
+        {type: "total", session: "5", team_id: "team004", team_name: "Т-426", score: 230, tasks_solved: 23},
+        {type: "total", session: "5", team_id: "team005", team_name: "Т-157", score: 210, tasks_solved: 21},
+        {type: "total", session: "6", team_id: "team001", team_name: "Т-734", score: 260, tasks_solved: 26},
+        {type: "total", session: "6", team_id: "team002", team_name: "Т-218", score: 250, tasks_solved: 25},
+        {type: "total", session: "6", team_id: "team003", team_name: "Т-591", score: 235, tasks_solved: 23},
+        {type: "total", session: "6", team_id: "team004", team_name: "Т-426", score: 265, tasks_solved: 26},
+        {type: "total", session: "6", team_id: "team005", team_name: "Т-157", score: 245, tasks_solved: 24},
+        {type: "total", session: "информатика", team_id: "team001", team_name: "Т-734", score: 180, tasks_solved: 18},
+        {type: "total", session: "информатика", team_id: "team002", team_name: "Т-218", score: 175, tasks_solved: 17},
+        {type: "total", session: "информатика", team_id: "team003", team_name: "Т-591", score: 165, tasks_solved: 16},
+        {type: "total", session: "информатика", team_id: "team004", team_name: "Т-426", score: 185, tasks_solved: 18},
+        {type: "total", session: "информатика", team_id: "team005", team_name: "Т-157", score: 170, tasks_solved: 17},
+        {type: "total", session: "математика", team_id: "team001", team_name: "Т-734", score: 195, tasks_solved: 19},
+        {type: "total", session: "математика", team_id: "team002", team_name: "Т-218", score: 190, tasks_solved: 19},
+        {type: "total", session: "математика", team_id: "team003", team_name: "Т-591", score: 180, tasks_solved: 18},
+        {type: "total", session: "математика", team_id: "team004", team_name: "Т-426", score: 200, tasks_solved: 20},
+        {type: "total", session: "математика", team_id: "team005", team_name: "Т-157", score: 185, tasks_solved: 18},
+        {type: "session", session: "1", team_id: "team001", team_name: "Т-734", score: 85, tasks_solved: 8},
+        {type: "session", session: "1", team_id: "team002", team_name: "Т-218", score: 92, tasks_solved: 9},
+        {type: "session", session: "1", team_id: "team003", team_name: "Т-591", score: 78, tasks_solved: 7},
+        {type: "session", session: "1", team_id: "team004", team_name: "Т-426", score: 95, tasks_solved: 9},
+        {type: "session", session: "1", team_id: "team005", team_name: "Т-157", score: 88, tasks_solved: 8},
+        {type: "session", session: "2", team_id: "team001", team_name: "Т-734", score: 35, tasks_solved: 3},
+        {type: "session", session: "2", team_id: "team002", team_name: "Т-218", score: 23, tasks_solved: 2},
+        {type: "session", session: "2", team_id: "team003", team_name: "Т-591", score: 27, tasks_solved: 2},
+        {type: "session", session: "2", team_id: "team004", team_name: "Т-426", score: 30, tasks_solved: 3},
+        {type: "session", session: "2", team_id: "team005", team_name: "Т-157", score: 22, tasks_solved: 2},
+        {type: "session", session: "3", team_id: "team001", team_name: "Т-734", score: 35, tasks_solved: 3},
+        {type: "session", session: "3", team_id: "team002", team_name: "Т-218", score: 33, tasks_solved: 3},
+        {type: "session", session: "3", team_id: "team003", team_name: "Т-591", score: 30, tasks_solved: 3},
+        {type: "session", session: "3", team_id: "team004", team_name: "Т-426", score: 35, tasks_solved: 3},
+        {type: "session", session: "3", team_id: "team005", team_name: "Т-157", score: 32, tasks_solved: 3},
+        {type: "session", session: "4", team_id: "team001", team_name: "Т-734", score: 35, tasks_solved: 3},
+        {type: "session", session: "4", team_id: "team002", team_name: "Т-218", score: 34, tasks_solved: 3},
+        {type: "session", session: "4", team_id: "team003", team_name: "Т-591", score: 33, tasks_solved: 3},
+        {type: "session", session: "4", team_id: "team004", team_name: "Т-426", score: 35, tasks_solved: 3},
+        {type: "session", session: "4", team_id: "team005", team_name: "Т-157", score: 33, tasks_solved: 3},
+        {type: "session", session: "5", team_id: "team001", team_name: "Т-734", score: 35, tasks_solved: 3},
+        {type: "session", session: "5", team_id: "team002", team_name: "Т-218", score: 33, tasks_solved: 3},
+        {type: "session", session: "5", team_id: "team003", team_name: "Т-591", score: 32, tasks_solved: 3},
+        {type: "session", session: "5", team_id: "team004", team_name: "Т-426", score: 35, tasks_solved: 3},
+        {type: "session", session: "5", team_id: "team005", team_name: "Т-157", score: 35, tasks_solved: 3},
+        {type: "session", session: "6", team_id: "team001", team_name: "Т-734", score: 35, tasks_solved: 3},
+        {type: "session", session: "6", team_id: "team002", team_name: "Т-218", score: 35, tasks_solved: 3},
+        {type: "session", session: "6", team_id: "team003", team_name: "Т-591", score: 35, tasks_solved: 3},
+        {type: "session", session: "6", team_id: "team004", team_name: "Т-426", score: 35, tasks_solved: 3},
+        {type: "session", session: "6", team_id: "team005", team_name: "Т-157", score: 35, tasks_solved: 3},
+        {type: "session", session: "информатика", team_id: "team001", team_name: "Т-734", score: 80, tasks_solved: 8},
+        {type: "session", session: "информатика", team_id: "team002", team_name: "Т-218", score: 75, tasks_solved: 7},
+        {type: "session", session: "информатика", team_id: "team003", team_name: "Т-591", score: 70, tasks_solved: 7},
+        {type: "session", session: "информатика", team_id: "team004", team_name: "Т-426", score: 85, tasks_solved: 8},
+        {type: "session", session: "информатика", team_id: "team005", team_name: "Т-157", score: 75, tasks_solved: 7},
+        {type: "session", session: "математика", team_id: "team001", team_name: "Т-734", score: 85, tasks_solved: 8},
+        {type: "session", session: "математика", team_id: "team002", team_name: "Т-218", score: 80, tasks_solved: 8},
+        {type: "session", session: "математика", team_id: "team003", team_name: "Т-591", score: 75, tasks_solved: 7},
+        {type: "session", session: "математика", team_id: "team004", team_name: "Т-426", score: 90, tasks_solved: 9},
+        {type: "session", session: "математика", team_id: "team005", team_name: "Т-157", score: 80, tasks_solved: 8}
+    ];
+}
+
+loadData();
 
 // Показать сообщение об ошибке
 function showError(message) {
@@ -462,7 +572,7 @@ function showError(message) {
 // Инициализация при загрузке страницы
 function initTables() {
     // Получаем все сессии из записей типа 'session'
-    const sessions = [...new Set(csvData.filter(r => r.type === 'session').map(r => r.session))];
+    const sessions = [...new Set(apiData.filter(r => r.type === 'session').map(r => r.session))];
     
     // Заполняем выпадающий список сессиями
     sessionSelect.innerHTML = '<option value="">Выберите сессию</option>' + 
@@ -476,13 +586,16 @@ function initTables() {
         sessionSelect.value = sessions[0];
         renderSessionTable(sessions[0]);
     }
+    
+    // Показываем общую таблицу
+    totalTable.classList.remove('hidden');
 }
 
 function renderTotalTable() {
     const totalTeams = {};
     
     // Собираем данные по командам
-    csvData.filter(r => r.type === 'total').forEach(r => {
+    apiData.filter(r => r.type === 'total').forEach(r => {
         if (!totalTeams[r.team_id]) {
             totalTeams[r.team_id] = {
                 team_name: r.team_name, 
@@ -502,7 +615,7 @@ function renderTotalTable() {
         const sessions = Object.keys(sortedTeams[0][1].scores);
         const headerHTML = `
             <th class="position">Место</th>
-            <th>Талант ID</th>
+            <th>Команда</th>
             ${sessions.map(s => `<th>Сессия ${s}</th>`).join('')}
             <th>Всего баллов</th>
         `;
@@ -510,7 +623,7 @@ function renderTotalTable() {
     }
 
     // Очищаем таблицу
-    totalTable.innerHTML = '';
+    totalTableBody.innerHTML = '';
     
     // Заполняем таблицу данными
     sortedTeams.forEach((entry, index) => {
@@ -537,16 +650,16 @@ function renderTotalTable() {
             <td><b>${row.total}</b></td>
         `;
         
-        totalTable.appendChild(tr);
+        totalTableBody.appendChild(tr);
     });
 }
 
 function renderSessionTable(session) {
     // Фильтруем данные по выбранной сессии и типу 'session'
-    const sessionRows = csvData.filter(r => r.session === session && r.type === 'session');
+    const sessionRows = apiData.filter(r => r.session === session && r.type === 'session');
     
     if (sessionRows.length === 0) {
-        sessionTable.innerHTML = `
+        sessionTableBody.innerHTML = `
             <tr>
                 <td colspan="4" style="text-align: center; padding: 20px; color: #7f8c8d;">
                     <i class="fas fa-exclamation-circle"></i> Нет данных для выбранной сессии
@@ -560,7 +673,7 @@ function renderSessionTable(session) {
     sessionRows.sort((a, b) => parseInt(b.score) - parseInt(a.score));
     
     // Очищаем таблицу
-    sessionTable.innerHTML = '';
+    sessionTableBody.innerHTML = '';
     
     // Заполняем таблицу данными
     sessionRows.forEach((r, index) => {
@@ -584,7 +697,7 @@ function renderSessionTable(session) {
             <td>${r.tasks_solved} <span class="badge tasks-badge">задачи</span></td>
         `;
         
-        sessionTable.appendChild(tr);
+        sessionTableBody.appendChild(tr);
     });
     
     // Обновляем информацию о сессии
@@ -614,8 +727,8 @@ tabTotal.addEventListener('click', e => {
     e.preventDefault(); 
     tabTotal.classList.add('active'); 
     tabSession.classList.remove('active'); 
-    document.getElementById('totalTable').classList.remove('hidden'); 
-    document.getElementById('sessionTable').classList.add('hidden'); 
+    totalTable.classList.remove('hidden'); 
+    sessionTable.classList.add('hidden'); 
     sessionInfo.classList.add('hidden');
     sessionSelect.classList.add('hidden');
 });
@@ -624,8 +737,8 @@ tabSession.addEventListener('click', e => {
     e.preventDefault(); 
     tabSession.classList.add('active'); 
     tabTotal.classList.remove('active'); 
-    document.getElementById('totalTable').classList.add('hidden'); 
-    document.getElementById('sessionTable').classList.remove('hidden'); 
+    totalTable.classList.add('hidden'); 
+    sessionTable.classList.remove('hidden'); 
     sessionInfo.classList.remove('hidden');
     sessionSelect.classList.remove('hidden');
 });
@@ -635,8 +748,8 @@ teamSearch.addEventListener('keyup', function() {
     const filter = this.value.toLowerCase();
     
     // Определяем, какая таблица активна
-    const isTotalTableActive = !document.getElementById('totalTable').classList.contains('hidden');
-    const table = isTotalTableActive ? document.getElementById('totalTable') : document.getElementById('sessionTable');
+    const isTotalTableActive = !totalTable.classList.contains('hidden');
+    const table = isTotalTableActive ? totalTable : sessionTable;
     
     const rows = table.querySelectorAll('tbody tr');
     rows.forEach(row => {
